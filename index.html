@@ -38,7 +38,7 @@
         /* Container do Flashcard com efeito 3D */
         .card-container {
             width: 350px;
-            height: 250px;
+            height: 300px; /* Aumentei um pouco a altura para caber melhor as imagens */
             perspective: 1000px;
             cursor: pointer;
             margin-bottom: 30px;
@@ -54,7 +54,6 @@
             border-radius: 10px;
         }
 
-        /* Classe que faz o card girar */
         .card.flipped {
             transform: rotateY(180deg);
         }
@@ -66,6 +65,7 @@
             height: 100%;
             backface-visibility: hidden;
             display: flex;
+            flex-direction: column; /* Alinha itens em coluna para texto + imagem */
             justify-content: center;
             align-items: center;
             padding: 20px;
@@ -85,6 +85,15 @@
             background-color: #0076ff;
             color: white;
             transform: rotateY(180deg);
+        }
+
+        /* Estilo para as imagens dentro do card */
+        .card-face img {
+            max-width: 100%;
+            max-height: 150px; /* Limita a altura para não quebrar o layout */
+            border-radius: 5px;
+            margin-top: 10px;
+            object-fit: contain;
         }
 
         /* Botões de Navegação */
@@ -124,11 +133,9 @@
     <div class="card-container" onclick="flipCard()">
         <div class="card" id="flashcard">
             <div class="card-face card-front" id="question">
-                Carregando pergunta...
-            </div>
+                </div>
             <div class="card-face card-back" id="answer">
-                Carregando resposta...
-            </div>
+                </div>
         </div>
     </div>
 
@@ -138,12 +145,28 @@
     </div>
 
     <script>
-        // Adicione ou modifique suas perguntas e respostas aqui dentro:
+        // LISTA DE FLASHCARDS COM IMAGENS
+        // Você pode colocar a URL da imagem no campo "imageQuestion" ou "imageAnswer".
+        // Se não quiser imagem em algum, basta deixar como string vazia "".
         const flashcards = [
-            { question: "O que significa HTML?", answer: "HyperText Markup Language" },
-            { question: "Para que serve o CSS?", answer: "Para estilizar e dar design às páginas web." },
-            { question: "Como declarar uma variável constante em JavaScript?", answer: "Utilizando a palavra-chave 'const'." },
-            { question: "O que é o GitHub?", answer: "Uma plataforma de hospedagem de código e colaboração baseada no Git." }
+            { 
+                question: "Que logo de tecnologia é este?", 
+                imageQuestion: "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=400", // Link de exemplo (GitHub logo/art)
+                answer: "É o GitHub!",
+                imageAnswer: ""
+            },
+            { 
+                question: "Qual é o mascote do GitHub?", 
+                imageQuestion: "",
+                answer: "O Octocat (gato-polvo).",
+                imageAnswer: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=400" // Outra imagem de exemplo
+            },
+            { 
+                question: "O que este código JavaScript faz?", 
+                imageQuestion: "",
+                answer: "Exibe um alerta na tela.",
+                imageAnswer: ""
+            }
         ];
 
         let currentIndex = 0;
@@ -153,28 +176,36 @@
         const prevBtn = document.getElementById('prevBtn');
         const nextBtn = document.getElementById('nextBtn');
 
-        // Atualiza o conteúdo do card na tela
         function updateCard() {
-            // Remove a rotação para mostrar a frente primeiro
             cardElement.classList.remove('flipped');
             
-            // Espera um tempinho para trocar o texto enquanto o card desvira
             setTimeout(() => {
-                questionElement.innerText = flashcards[currentIndex].question;
-                answerElement.innerText = flashcards[currentIndex].answer;
+                const current = flashcards[currentIndex];
+
+                // Monta a Frente (Pergunta)
+                let frontHTML = `<p>${current.question}</p>`;
+                if (current.imageQuestion) {
+                    frontHTML += `<img src="${current.imageQuestion}" alt="Imagem da pergunta">`;
+                }
+                questionElement.innerHTML = frontHTML;
+
+                // Monta o Verso (Resposta)
+                let backHTML = `<p>${current.answer}</p>`;
+                if (current.imageAnswer) {
+                    backHTML += `<img src="${current.imageAnswer}" alt="Imagem da resposta">`;
+                }
+                answerElement.innerHTML = backHTML;
+
             }, 150);
 
-            // Controla a ativação dos botões
             prevBtn.disabled = currentIndex === 0;
             nextBtn.disabled = currentIndex === flashcards.length - 1;
         }
 
-        // Gira o card ao clicar
         function flipCard() {
             cardElement.classList.toggle('flipped');
         }
 
-        // Avança para o próximo card
         function nextCard() {
             if (currentIndex < flashcards.length - 1) {
                 currentIndex++;
@@ -182,7 +213,6 @@
             }
         }
 
-        // Volta para o card anterior
         function prevCard() {
             if (currentIndex > 0) {
                 currentIndex--;
@@ -190,7 +220,6 @@
             }
         }
 
-        // Inicializa o primeiro card
         updateCard();
     </script>
 </body>
